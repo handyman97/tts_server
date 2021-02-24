@@ -1,0 +1,23 @@
+{
+    "inputs" : [
+	{
+	    "host" : "127.0.0.1:1883",
+	    "protocol" : "mqtt",
+	    "topic" : "texter/#"
+	}
+    ],
+
+    "synthesizers" : [
+	{
+	    "engine" : "espeak",
+	    "languages" : ["en"]
+	}
+    ],
+
+    "outputs" : [
+	{
+	    "host" : "127.0.0.1",
+	    "api" : "pulseaudio"
+	}
+    ]
+}

@@ -1,0 +1,11 @@
+../_build/listener.o :  listener.h 
+../_build/logger.o :  logger.h 
+../_build/server.o :  server.h listener.h synthesizer.h sink.h 
+../_build/sink.o :  sink.h 
+../_build/synthesizer.o :  synthesizer.h 
+../_build/logger.o :  logger.c 
+../_build/main.o :  main.cc server.h listener.h synthesizer.h sink.h logger.h 
+../_build/sink.o :  sink.cc sink.h 
+../_build/synthesizer.o :  synthesizer.cc synthesizer.h logger.h 
+
+# generated at: 2021-02-22T17:20:11+0900

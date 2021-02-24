@@ -1,0 +1,53 @@
+{
+    "inputs" : [
+	{
+	    "protocol" : "mqtt",
+	    "host" : "192.168.10.11:1883",
+	    "topic" : "texter/#"
+	}
+    ],
+
+    "synthesizers" : [
+	{
+	    "engine" : "espeak",
+	    "languages" : ["en", "es", "fr"]
+	},
+	{
+	    "engine" : "festival",
+	    "languages" : ["en"]
+	},
+	{
+	    "engine" : "openjtalk",
+	    "languages" : ["ja"],
+	    "host" : "192.168.10.11:50051",
+	    "api" : "google::cloud::texttospeech::v1",
+	    "credentials" : null
+	},
+	{
+	    "engine" : "google",
+	    "languages" : ["en", "ja"],
+	    "host" : "texttospeech.googleapis.com",
+	    "api" : "google::cloud::texttospeech::v1",
+	    "credentials" : "credentials.json"
+	}
+    ],
+
+    "outputs" : [
+	{
+	    "name" : "bedroom",
+	    "host" : "192.168.10.11",
+	    "api" : "pulseaudio"
+	},
+	{
+	    "name" : "lounge",
+	    "host" : "192.168.10.8",
+	    "api" : "pulseaudio"
+	},
+	{
+	    "name" : "entrance",
+	    "host" : "192.168.10.3",
+	    "api" : "pulseaudio",
+	    "device" : "sink101"
+	}
+    ]
+}

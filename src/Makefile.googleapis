@@ -1,0 +1,57 @@
+# -*-makefile-*-
+#
+# PREREQUISITES
+# - github.com/googleapis/googleapis
+# - protobuf-compiler-grpc libgrpc++-dev (debian packages)
+#
+
+TOP_DIR		?=	..
+BUILD_DIR	?=	$(TOP_DIR)/_build
+
+# google/api
+#API_REPO	?=	https://github.com/googleapis/googleapis
+API_REPO	?=	$(HOME)/git/github.com/googleapis/googleapis
+API_PROTOS	=	annotations client field_behavior http
+API_SRCS	:=	$(API_PROTOS:%=$(BUILD_DIR)/googleapis/google/api/%.pb.cc)
+API_OBJS	=	$(API_PROTOS:%=$(BUILD_DIR)/googleapis/google/api/%.pb.o)
+
+# google/cloud/texttospeech/v1
+TTS_PROTOS	=	cloud_tts
+TTS_SRCS	=	cloud_tts.pb.cc cloud_tts.grpc.pb.cc
+TTS_SRCS	:=	$(TTS_SRCS:%=$(BUILD_DIR)/googleapis/google/cloud/texttospeech/v1/%)
+#TTS_SRCS	:=	$(TTS_SRCS:%=$(BUILD_DIR)/googleapis/google/cloud/texttospeech/v1beta1/%)
+TTS_OBJS	=	$(TTS_SRCS:%.cc=%.o)
+
+$(BUILD_DIR)/%.pb.cc:	%.proto
+	@mkdir -p $$(dirname $@)
+	protoc -Igoogleapis --plugin=protoc-gen-grpc=$$(which grpc_cpp_plugin) --grpc_out=$(BUILD_DIR)/googleapis --cpp_out=$(BUILD_DIR)/googleapis $<
+
+%.o:	%.cc
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+CXX		?=	g++
+CPPFLAGS	?=
+CPPFLAGS	+=	-I$(BUILD_DIR)/googleapis
+CXXFLAGS	?=	-g
+LDFLAGS		?=
+LDFLAGS		+=	$$(pkg-config --libs grpc++ grpc) \
+			-Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed \
+			-lprotobuf
+
+all::	$(API_OBJS) $(TTS_OBJS)
+$(API_OBJS) $(TTS_OBJS):	$(API_SRCS) $(TTS_SRCS)
+#$(API_SRCS) $(TTS_SRCS):	googleapis
+
+clean::
+veryclean::	clean
+	rm -rf googleapis
+
+#
+.PHONY:	googleapis
+googleapis:
+	test ! -d $(API_REPO) \
+	&& { test -d googleapis || git clone https://github.com/googleapis/googleapis.git; } \
+	|| { for d in google/{api,cloud/texttospeech};\
+	     do \
+	       mkdir -p ./googleapis/$$d && rsync -avzop $(API_REPO)/$$d/ ./googleapis/$$d/;\
+	     done; }
