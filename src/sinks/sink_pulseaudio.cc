@@ -68,6 +68,7 @@ sink_pulseaudio::consume (int fd)
         syslog (LOG_ERR, "[consume] pa_simple_new (server=\"%s\") failed (%d)", _address.c_str(), err);
         return (-1);
     }
+    assert (s);
     while (1)
     {
         const size_t max_len = 1024;
@@ -75,12 +76,16 @@ sink_pulseaudio::consume (int fd)
         ssize_t len = read (fd, buff, max_len);
         if (len <= 0) break;
         rslt = pa_simple_write (s, buff, len, &err);
+        if (rslt < 0) goto abort;
     }
 
     rslt = pa_simple_drain (s, &err);
+    if (rslt < 0) goto abort;
     assert (rslt == 0);
 
+ abort:
+    if (rslt < 0) syslog (LOG_ERR, "[consume] abort on error: %d", err);
     pa_simple_free (s);
 
-    return (0);
+    return (err);
 }

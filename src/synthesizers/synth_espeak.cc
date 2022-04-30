@@ -212,6 +212,7 @@ _init (void)
         espeak_ng_ClearErrorContext(&context);
         return -1;
     }
+    return 0;
 }
 
 

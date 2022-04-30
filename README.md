@@ -1,6 +1,6 @@
 # Summary
 
-`tts_server` is a network TTS ([Text-to-Speech](https://en.wikipedia.org/wiki/Speech_synthesis)) server,
+`tts_server` is a network TTS ([Text-to-Speech](https://en.wikipedia.org/wiki/Speech_synthesis)) server/wrapper,
 written entirely in [C++](https://en.cppreference.com/w/cpp/11) and targeted for Linux,
 with the following features:
 
@@ -22,6 +22,7 @@ $ /etc/init.d/mosquitto start
 Make sure that your host has an active pulseaudio sink for speech output.
 
 ```
+$ pulseaudio --start  
 $ pacmd list-sinks | grep 'Default Sink'  
 $ paplay /usr/share/sounds/alsa/Noise.wav
 ```
@@ -38,7 +39,7 @@ Then, publish the following MQTT message that tells `tts_server` to say "hello".
 $ mosquitto_pub -h localhost -t texter -m '{"text":"hello"}'
 ```
 
-Subsequently, you should hear the spearker attached to your host whisper "hello".
+In a moment, you should hear the spearker attached to your host whisper "hello".
 
 
 # Build (docker container)
@@ -71,7 +72,7 @@ Once the above packages installed, run the following command:
 ```
 $ git clone https://github.com/handyman97/tts_server  
 $ cd tts_server  
-$ make && make install  
+$ make googleapis && make && make install  
 ```
 
 The `tts_server` binary should be available at `/usr/local/bin`.
@@ -95,6 +96,6 @@ Each input message to `tts_server` is a JSON object that carries the following k
 
 Configurations can be defined as separate JSON files.
 You can provide `tts_server` with your own configuration by starting `tts_server` with `--conf <your_conf_file>`.  
-See [this](../conf/README.md) for the detail.
+See [this](https://github.com/handyman97/tts_server/tree/main/conf) for the detail.
 
 Note, by default, `tts_server` looks up [`default.json`](../conf/default.json) in the `conf` directory.

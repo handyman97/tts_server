@@ -11,7 +11,7 @@ RUN echo "dash dash/sh boolean false" | debconf-set-selections;\
     apt update;\
     apt install -y build-essential bison flex gawk git rsync wget;\
     apt install -y nlohmann-json3-dev libmosquitto-dev libespeak-ng-dev festival-dev protobuf-compiler-grpc libgrpc++-dev libpulse-dev libssh2-1-dev;\
-    apt install -y mosquitto mosquitto-clients rsyslogd
+    apt install -y rsyslog
 
 # tts_server
 ADD . /root/tts_server
@@ -30,8 +30,8 @@ RUN echo "dash dash/sh boolean false" | debconf-set-selections;\
     dpkg-reconfigure -f noninteractive dash;\
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr-local-lib.conf;\
     apt update;\
-    apt install -y libmosquitto-dev libespeak-ng-dev festival-dev libgrpc++-dev libpulse-dev libssh2-1-dev libgomp1;\
-    apt install -y rsyslog
+    apt install -y libmosquitto1 libespeak-ng1 festival libgrpc++1 libpulse-mainloop-glib0 libssh2-1;\
+    apt install -y rsyslog mosquitto mosquitto-clients pulseaudio
 
 COPY --from=builder /usr/local /usr/local
 

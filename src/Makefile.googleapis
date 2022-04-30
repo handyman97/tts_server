@@ -9,9 +9,9 @@ TOP_DIR		?=	..
 BUILD_DIR	?=	$(TOP_DIR)/_build
 
 # google/api
-#API_REPO	?=	https://github.com/googleapis/googleapis
-API_REPO	?=	$(HOME)/git/github.com/googleapis/googleapis
+API_REPO	?=	https://github.com/googleapis/googleapis
 API_PROTOS	=	annotations client field_behavior http
+API_PROTOS	+=	resource
 API_SRCS	:=	$(API_PROTOS:%=$(BUILD_DIR)/googleapis/google/api/%.pb.cc)
 API_OBJS	=	$(API_PROTOS:%=$(BUILD_DIR)/googleapis/google/api/%.pb.o)
 
@@ -38,7 +38,7 @@ LDFLAGS		+=	$$(pkg-config --libs grpc++ grpc) \
 			-Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed \
 			-lprotobuf
 
-all::	$(API_OBJS) $(TTS_OBJS)
+all::	googleapis $(API_OBJS) $(TTS_OBJS)
 $(API_OBJS) $(TTS_OBJS):	$(API_SRCS) $(TTS_SRCS)
 #$(API_SRCS) $(TTS_SRCS):	googleapis
 
@@ -49,9 +49,4 @@ veryclean::	clean
 #
 .PHONY:	googleapis
 googleapis:
-	test ! -d $(API_REPO) \
-	&& { test -d googleapis || git clone https://github.com/googleapis/googleapis.git; } \
-	|| { for d in google/{api,cloud/texttospeech};\
-	     do \
-	       mkdir -p ./googleapis/$$d && rsync -avzop $(API_REPO)/$$d/ ./googleapis/$$d/;\
-	     done; }
+	test -d googleapis || git clone $(API_REPO)

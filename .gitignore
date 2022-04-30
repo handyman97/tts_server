@@ -1,4 +1,8 @@
+RCS/
+_build/
+tmp/
+obsolete/
+README.html
+CHANGES.html
 *~
 *.bak
-*.html
-obsolete/

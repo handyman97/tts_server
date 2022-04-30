@@ -1,4 +1,4 @@
-//
+// $Id: server.cc,v 1.1 2022/04/20 06:07:22 hito Exp hito $
 
 #include "server.h"
 #include "logger.h"
@@ -446,17 +446,25 @@ tts_server::setup (const char* conf_file)
             raise (SIGKILL);
         }
 
+        // look up conf_file
         struct stat buff;
         int err = stat (conf_file_adjusted, &buff);
         assert (!err);
         const int len = buff.st_size;
         assert (len < 100000);
+
+        // read conf_file into content
         uint8_t content[len + 1];
         fread (content, len, 1, f);
         content[len] = '\0';
         fclose (f);
 
-        conf = json::parse (content);
+        //conf = json::parse (content);
+        // ** this is no longer suppoprted
+        // ** work-around
+        std::vector<uint8_t> v;
+        for (int i = 0; i <=len; i++) v.push_back (content[i]);
+        conf = json::parse (v);
     }
     catch (...)
     {
@@ -588,7 +596,11 @@ process_request (json* req)
     {
         rslts[n++] = std::async (static_cast<int (sink::*)(const char*)>(&sink::consume), s, filename);
     }
-    for (int i = 0; i < n; i++) rslts[i].get ();
+    for (int i = 0; i < n; i++)
+    {
+        //rslts[i].get ();
+        try { rslts[i].get (); } catch (...) { syslog (LOG_ERR, "failure at sink#%d", i); }
+    }
     std::remove (filename);
 
     return 0;

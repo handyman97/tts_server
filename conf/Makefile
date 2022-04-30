@@ -5,5 +5,5 @@ all::
 clean::;	rm -f *~
 veryclean::	clean
 install::
-	@mkdir -p $(PREFIX)/share/$(shell basename $(TOP_DIR))
-	cp -fp *.json $(PREFIX)/share/$(shell basename $(TOP_DIR))
+	@mkdir -p $(PREFIX)/share/$$(basename $(TOP_DIR))
+	cp -fp *.json $(PREFIX)/share/$$(basename $(TOP_DIR))

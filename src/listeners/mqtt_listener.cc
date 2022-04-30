@@ -105,7 +105,11 @@ mqtt_listener::setup (const nlohmann::json& conf)
       // note: connection will be lost if no message is transmitted for (1.5 * keep_alive) seconds
     rslt = mosquitto_connect_bind (_mosq, _address.c_str(), _port, keep_alive, NULL);
       // mosq, host, port, keep_alive, bind_addr
-    if (rslt != MOSQ_ERR_SUCCESS) raise (SIGTERM);
+    if (rslt != MOSQ_ERR_SUCCESS)
+    {
+        syslog (LOG_ERR, "[mqtt_listener::setup] failure in mosquitto_connect_bind");
+        raise (SIGTERM);
+    }
 
     // subscription
     //rslt = mosquitto_subscribe (mosq, NULL, mqtt_topic, 1);

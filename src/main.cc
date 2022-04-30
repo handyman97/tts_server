@@ -54,9 +54,15 @@ main (int argc, char** argv)
             return (0);
         }
         else if (*argv[i] == '-')
-            assert (false);
+        {
+            fprintf (stderr, "invalid option: \"%s\"\n", argv[i]);
+            exit (1);
+        }
         else
-            assert (false);
+        {
+            fprintf (stderr, "invalid argument: \"%s\"\n", argv[i]);
+            exit (1);
+        }
     }
 
     // traps
