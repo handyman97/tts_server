@@ -178,14 +178,15 @@ synth_gcloud::synth_gcloud (const nlohmann::json& spec)
 
 }
 
+// req = {text, language, gender, engine, sinks:[..]}
 bool
 synth_gcloud::synthesizable (const nlohmann::json& req) const
 {
     syslog (LOG_DEBUG, "[synthesizable] %s", req.dump().c_str());
 
-    // name
+    // (unique) name
     std::string name_;
-    if (req.find("synthesizer") != req.end()) name_ = req["synthesizer"];
+    if (req.find("name") != req.end()) name_ = req["name"];
     if (!name_.empty() && name_.compare(name)) return false;
 
     // host
@@ -346,7 +347,7 @@ synth_gcloud::synthesize (const nlohmann::json& req, uint8_t*& bytes, size_t& le
     // enum grpc::StatusCode (/usr/include/grpcpp/impl/codegen/status_code_enum.h)
     if (!status.ok ())
     {
-        syslog (LOG_ERR, "[synth_gcloud::synthesize] failure in SynthesizeSPeech: status=%d (see \"status_code_enum.h\")",
+        syslog (LOG_ERR, "[synth_gcloud::synthesize] failure in SynthesizeSpeech: status=%d (see \"status_code_enum.h\")",
                 (int)status.error_code());
         return -1;
     }

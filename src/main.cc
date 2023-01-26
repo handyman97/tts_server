@@ -15,15 +15,11 @@
 #include "server.h"
 #include "logger.h"
 
-#ifndef DAEMONIZE
-#define DAEMONIZE 1
-#endif
-
 // globals
 const char* g_program = NULL;
-//char g_machine[100];
-//pid_t g_pid = 0; 
 unsigned int g_verbose = 0;
+bool g_daemonize = true;
+bool g_syslog = true;
 
 //
 int
@@ -53,6 +49,14 @@ main (int argc, char** argv)
                     prog);
             return (0);
         }
+        else if (!strncmp (argv[i], "--daemonize=", 12))
+        {
+            const char* param = argv[i] + 12;
+            g_daemonize = !strcmp (param, "true") || !strcmp (param, "1") || !strcmp (param, "yes");
+        }
+        else if (!strncmp (argv[i], "--logger=", 9))
+            g_syslog = !strcmp (argv[i] + 9, "syslog");
+
         else if (*argv[i] == '-')
         {
             fprintf (stderr, "invalid option: \"%s\"\n", argv[i]);
@@ -70,7 +74,8 @@ main (int argc, char** argv)
     signal (SIGHUP, tts_server::quit);
     signal (SIGINT, tts_server::quit);
 
-#if DAEMONIZE
+// --------------------------------------------------------------------------------
+if (g_daemonize) {
     // daemonization (http://www.netzmafia.de/skripten/unix/linux-daemon-howto.html)
     pid_t child_pid = fork ();
     if (child_pid < 0) { fprintf (stderr, "fork failed\n"); exit (1); }
@@ -82,7 +87,8 @@ main (int argc, char** argv)
     close (STDIN_FILENO);
     close (STDOUT_FILENO);
     close (STDERR_FILENO);
-#endif
+}
+// --------------------------------------------------------------------------------
 
     //syslog
     openlog (g_program, LOG_PID, LOG_USER);
@@ -118,12 +124,13 @@ _syslog (int prio, const char* fmt, ...)
     va_list ap;
     va_start (ap, fmt);
 
-#if DAEMONIZE
-    vsyslog (prio, fmt, ap);
-#else
-    vfprintf (stderr, fmt, ap);
-    fprintf (stderr, "\n");
-#endif
+    if (g_syslog)
+        vsyslog (prio, fmt, ap);
+    else
+    {
+        vfprintf (stderr, fmt, ap);
+        fprintf (stderr, "\n");
+    }
 
     va_end (ap);
 }

@@ -2,7 +2,7 @@
     "inputs" : [
 	{
 	    "protocol" : "mqtt",
-	    "host" : "192.168.10.11:1883",
+	    "host" : "127.0.0.1:1883",
 	    "topic" : "texter/#"
 	}
     ],
@@ -42,12 +42,6 @@
 	    "name" : "lounge",
 	    "host" : "192.168.10.8",
 	    "api" : "pulseaudio"
-	},
-	{
-	    "name" : "entrance",
-	    "host" : "192.168.10.3",
-	    "api" : "pulseaudio",
-	    "device" : "sink101"
 	}
     ]
 }

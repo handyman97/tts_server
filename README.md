@@ -19,7 +19,8 @@ Launch a MQTT broker, such as Eclipse [mosquitto](https://mosquitto.org).
 $ /etc/init.d/mosquitto start  
 ```
 
-Make sure that your host has an active pulseaudio sink for speech output.
+Make sure that you have an active pulseaudio server for digesting speech text.
+By default, the server is assumed to be `localhost` (configurable).
 
 ```
 $ pulseaudio --start  
@@ -39,7 +40,7 @@ Then, publish the following MQTT message that tells `tts_server` to say "hello".
 $ mosquitto_pub -h localhost -t texter -m '{"text":"hello"}'
 ```
 
-In a moment, you should hear the spearker attached to your host whisper "hello".
+In a moment, you should hear the spearker attached to your host utter "hello".
 
 
 # Build (docker container)
@@ -55,9 +56,10 @@ $ make -C tts_server docker-build
 
 ### Precompiled Debian/Ubuntu packages
 
-- libmosquitto-dev
+- libmosquitto-dev (MQTT broker)
 - nlohmann-json3-dev
-- libespeak-ng-dev
+- libespeak-ng-dev (eSpeak-ng TTS engine)
+- libfestival-dev (Festival TTS engine)
 - protobuf-compiler-grpc libgrpc++-dev
 - libpulse-dev
 - libssh2-1-dev

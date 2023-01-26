@@ -108,6 +108,7 @@ mqtt_listener::setup (const nlohmann::json& conf)
     if (rslt != MOSQ_ERR_SUCCESS)
     {
         syslog (LOG_ERR, "[mqtt_listener::setup] failure in mosquitto_connect_bind");
+        syslog (LOG_ERR, mosquitto_strerror (rslt));
         raise (SIGTERM);
     }
 
@@ -227,6 +228,7 @@ void
 cb_disconnect (struct mosquitto* mosq, void* user, int reason)
 {
     if (reason == 0) return; // mosquitto_disconnect call
+    syslog (LOG_DEBUG, "[cb_disconnect] reason=%d", reason);
 
     if (reason != MOSQ_ERR_CONN_LOST)
     {
@@ -234,14 +236,17 @@ cb_disconnect (struct mosquitto* mosq, void* user, int reason)
         raise (SIGHUP);
     }
 
+    // reconnection
+    int rslt;
     for (int k = 0; k < 10; k++)
     {
         sleep (3);
-        int rslt = mosquitto_reconnect (mosq);
+        rslt = mosquitto_reconnect (mosq);
         if (rslt == MOSQ_ERR_SUCCESS) return;
     }
 
-    syslog (LOG_ERR, "something's still wrong. check it out.");
+    syslog (LOG_ERR, "[cb_disconnect] error=%d", rslt);
     raise (SIGHUP);
+
     return;
 }

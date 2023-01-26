@@ -11,6 +11,7 @@ BUILD_DIR	?=	$(TOP_DIR)/_build
 # google/api
 API_REPO	?=	https://github.com/googleapis/googleapis
 API_PROTOS	=	annotations client field_behavior http
+API_PROTOS	+=	launch_stage
 API_PROTOS	+=	resource
 API_SRCS	:=	$(API_PROTOS:%=$(BUILD_DIR)/googleapis/google/api/%.pb.cc)
 API_OBJS	=	$(API_PROTOS:%=$(BUILD_DIR)/googleapis/google/api/%.pb.o)

@@ -33,6 +33,6 @@ tar::	clean
 
 #
 rsync-to-%:	clean
-	dest=src/2022/$(shell basename $$PWD);\
+	dest=src/2023/$(shell basename $$PWD);\
 	rsync -avzop --exclude=node_modules \
 	$(TOP_DIR)/ $*:$$dest
